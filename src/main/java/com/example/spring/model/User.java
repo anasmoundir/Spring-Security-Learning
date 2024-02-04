@@ -23,7 +23,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private  Long id;
-    private  String name;
+    private String username;
     @JsonIgnore
     private String password;
     @ManyToMany(fetch = FetchType.EAGER)
