@@ -20,14 +20,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        logger.debug("Entering loggin by user name");
+        logger.debug("Entering login by username");
         User user = userRepository.findByUsername(username);
-        if(user == null)
-        {
-            logger.error("user not found" + username);
+        if (user == null) {
+            logger.error("User not found: " + username);
+            throw new UsernameNotFoundException("User not found with username: " + username);
         }
-        logger.info("user authenticate successfully");
+        logger.info("User authenticated successfully: " + username);
         return new CustomUserDetails(user);
     }
-
 }

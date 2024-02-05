@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.security.core.GrantedAuthority;
 
 @Entity
 @Data
@@ -18,4 +19,6 @@ public class UserRole {
     @Column(name = "ID")
     private long id;
     private String name;
+
+
 }

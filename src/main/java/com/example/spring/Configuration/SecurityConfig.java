@@ -1,6 +1,7 @@
 package com.example.spring.Configuration;
 
 import com.example.spring.service.UserDetailsServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,39 +30,42 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-public class SecurityConfig {
+
+public class SecurityConfig  {
     @Autowired
-    JwtAuthFilter jwtAuthFilter;
+   JwtAuthFilter jwtAuthFilter;
     @Bean
     public UserDetailsService userDetailsService()
     {
         return new UserDetailsServiceImpl();
     }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf().disable()
-                .authorizeHttpRequests()
-                .requestMatchers("/api/v1/login").permitAll()
-                .and()
-                .authorizeHttpRequests().requestMatchers("/api/v1/**")
-                .authenticated()
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class).build();
-    }
-
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService());
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
+     authenticationProvider.setPasswordEncoder(passwordEncoder());
         return authenticationProvider;
 
     }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(
+                        (authorize) -> authorize
+                        .requestMatchers("/api/v1/login").permitAll()
+                        .anyRequest().authenticated())
+                .sessionManagement(AbstractHttpConfigurer::disable)
+                .sessionManagement(sessionManagement -> sessionManagement
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class).build();
+    }
+
+
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder()
