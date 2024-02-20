@@ -1,5 +1,4 @@
 package com.example.spring.service;
-
 import com.example.spring.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +21,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         logger.debug("Entering login by username");
         User user = userRepository.findByUsername(username);
+        logger.debug("User found: " + user);
         if (user == null) {
             logger.error("User not found: " + username);
             throw new UsernameNotFoundException("User not found with username: " + username);
